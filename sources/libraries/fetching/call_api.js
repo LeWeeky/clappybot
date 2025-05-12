@@ -22,6 +22,11 @@
  */
 async function api_call(call)
 {
+	if (!process.env.API_URI)
+	{
+		console.warn('\x1b[31m%s\x1b[0m', "[ ! WARING ! ]: API_URI is not set!")
+		return (null);
+	}
 	try {
 		return (await fetch(`${process.env.API_URI}/${call}`))
 	} catch (error) {
