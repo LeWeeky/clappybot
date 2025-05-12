@@ -1,3 +1,27 @@
+# Clappybot
+nodes.zip
+node_modules
+test.js
+scripts/
+main_db.sqlite
+addon_db.sqlite
+.env
+tests
+sources/modules
+add-on
+add-ons
+addons
+commit.md
+data
+add_headers.py
+tmp
+
+# VSC
+.vscode
+
+# MacOS
+.DS_Store
+
 # Logs
 logs
 *.log
