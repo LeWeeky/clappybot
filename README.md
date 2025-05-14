@@ -68,7 +68,7 @@ Set your parameters and save them in the `data/.env` file.
 Now we need a template for our first module, don't worry we can clone this one : 
 
 ```
-git https://github.com/LeWeeky/Module-template-for-clappybot.git sources/modules/template
+git clone https://github.com/LeWeeky/Module-template-for-clappybot.git sources/modules/template
 ```
 
 Before the first run, make sure all intents are enabled in your [discord application](https://discord.com/developers/applications). Then you can check for updates and install dependencies by running this command :
