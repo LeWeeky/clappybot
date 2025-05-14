@@ -71,7 +71,12 @@ Now we need a template for our first module, don't worry we can clone this one :
 git https://github.com/LeWeeky/Module-template-for-clappybot.git sources/modules/template
 ```
 
-Before the first run, make sure all intents are enabled in your [discord application](https://discord.com/developers/applications). Then you can start your bot by running this command :
+Before the first run, make sure all intents are enabled in your [discord application](https://discord.com/developers/applications). Then you can check for updates and install dependencies by running this command :
+```
+npm run update
+```
+
+Once done, you can start as follows
 ```
 npm run dev
 ```
