@@ -25,23 +25,27 @@
  * @param {any[] | null | false} data 
  * @returns 
  */
-async function sql_select(connection, table, target, where = null, data = null)
+async function sql_select(connection, table, target, where = null, data = null, limit = 0)
 {
 	try {
 		let rows;
+		let limit_query = '';
+
+		if (limit > 0)
+			limit_query = `LIMIT ${limit}`
 
 		if (where)
 		{
 			if (data)
 			{
 				const [rows_, fields] = await connection.promise()
-				.execute(`SELECT ${target} FROM ${table} WHERE ${where}`, data);
+				.execute(`SELECT ${target} FROM ${table} WHERE ${where} ${limit_query}`, data);
 				rows = rows_;
 			}
 			else
 			{
 				const [rows_, fields] = await connection.promise()
-				.query(`SELECT ${target} FROM ${table} WHERE ${where}`);
+				.query(`SELECT ${target} FROM ${table} WHERE ${where} ${limit_query}`);
 				rows = rows_;
 			}
 		}
@@ -65,7 +69,7 @@ async function sql_select(connection, table, target, where = null, data = null)
 		return (rows);
 	}
 	catch (error) {
-		if (process.env.DEBUG_ERROR == "true")
+		if (process.env.DEBUG_ERROR != "false")
 		{
 			console.error('\x1b[31m%s\x1b[0m', `❌ Erreur : impossible de récupérer ${target} dans la table ${table}`);
 			console.error(error);

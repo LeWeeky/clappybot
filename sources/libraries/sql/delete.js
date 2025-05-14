@@ -36,7 +36,7 @@ async function sql_delete(connection, table, where, data = null)
         return (null);
     }
     catch (error) {
-		if (process.env.DEBUG_ERROR == "true")
+		if (process.env.DEBUG_ERROR != "false")
 		{
 			console.error('\x1b[31m%s\x1b[0m', `❌ Erreur : Impossible de supprimer l'élement souhaité dans la table ${table}`);
         	console.error(error);

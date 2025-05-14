@@ -54,7 +54,7 @@ async function sql_count(connection, table, where, data = null)
 		return (rows[0].occurrences);
 	}
 	catch (error) {
-		if (process.env.DEBUG_ERROR == "true")
+		if (process.env.DEBUG_ERROR != "false")
 		{
 			console.error('\x1b[31m%s\x1b[0m', `❌ Erreur : Comptage raté dans ${table}`);
 			console.error(error);

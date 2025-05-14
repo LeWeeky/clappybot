@@ -46,7 +46,7 @@ async function sql_request(connection, request, data = null)
 		return (rows);
 	}
 	catch (error) {
-		if (process.env.DEBUG_ERROR == "true")
+		if (process.env.DEBUG_ERROR != "false")
 		{
 			console.error('\x1b[31m%s\x1b[0m', `❌ Erreur d'exécution : ${request}`);
 			console.error(error);

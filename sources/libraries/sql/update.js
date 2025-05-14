@@ -31,12 +31,16 @@ async function sql_update(connection, table, target, where, data)
         await connection.promise().execute(`UPDATE ${table} SET ${target} WHERE ${where}`,
             data
         );
-	    console.log('\x1b[32m%s\x1b[0m', `✅ Table ${table} mise à jour`);
+		if (process.env.DEBUG_INFO == "true")
+	    	console.log('\x1b[32m%s\x1b[0m', `✅ Table ${table} mise à jour`);
         return (null);
     }
     catch (error) {
-        console.error('\x1b[31m%s\x1b[0m', `❌ Erreur : mise à jour de la Table ${table}`);
-        console.log(error);
+		if (process.env.DEBUG_ERROR != "false")
+        {
+			console.error('\x1b[31m%s\x1b[0m', `❌ Erreur : mise à jour de la Table ${table}`);
+       	 	console.error(error);
+		}
         return (error);
     }
 }

@@ -37,7 +37,7 @@ async function sql_create_table(connection, name, content, more = null)
         return (null);
     }
     catch (error) {
-		if (process.env.DEBUG_ERROR == "true")
+		if (process.env.DEBUG_ERROR != "false")
         {
 			console.error('\x1b[31m%s\x1b[0m', `❌ Erreur : Table ${name}`);
         	console.error(error);

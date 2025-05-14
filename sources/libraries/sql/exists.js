@@ -54,7 +54,7 @@ async function sql_exists(connection, table, where, data = null)
 		return (rows[0].element_exists);
 	}
 	catch (error) {
-		if (process.env.DEBUG_ERROR == "true")
+		if (process.env.DEBUG_ERROR != "false")
 		{
 			console.error('\x1b[31m%s\x1b[0m', `❌ Erreur : Véréfication de l'existance d'un élément dans ${table} ratée`);
 			console.error(error);
