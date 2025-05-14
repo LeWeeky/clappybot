@@ -41,7 +41,7 @@ async function init_version(guild)
                 name:
                     `🏆️ ClappyBot ${clappybot.version}`,
                 value:
-					"``` Accueillez les ClappyBots dans le monde fantastique de l'OpenSource ! ```"
+					"``` Découvrez les \"Modèles\" un moyen pratique de créer des objets dans votre base de données ! ```"
             }
         )
         .setImage("https://clappycrew.com/src/clappybot-update.gif")

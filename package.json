@@ -1,10 +1,10 @@
 {
 	"name": "clappybot",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "",
 	"repository": {
 		"type": "git",
-		"url": "ssh://leweeky@45.140.164.211:2076/~/clappybot.git"
+		"url": "https://github.com/LeWeeky/clappybot.git"
 	},
 	"license": "GPL-3.0-or-later",
 	"author": "LeWeeky",
