@@ -359,12 +359,10 @@ class ClappyBot
 	 * 
 	 * @param {string} prefix 
 	 */
-    set_prefix(prefix)
-
+    async setPrefix(prefix)
     {
-        this.prefix = prefix;
-
-        CONFIG_TABLE.set(`bot.prefix`, prefix)
+        this.prefix = this.config.prefix = prefix;
+		await this.config.save();
     }
 
 	/**
@@ -372,52 +370,22 @@ class ClappyBot
 	 * @param {string} guild_id 
 	 */
     async setGuild(guild_id)
-
     {
-		globalThis.guild_id = guild_id;
-
-		const connection = this.database.connect();
-		const row = await mysql_request(connection,
-			"SELECT EXISTS(SELECT 1 FROM myclappybot) AS element_exists"
-		);
-
-		if (row && row.length)
-		{
-			await mysql_request(connection,
-				"UPDATE myclappybot SET guild_id = ?",
-				[guild_id])
-		}
-		else
-		{
-			await mysql_insert(connection, "myclappybot", "guild_id", [guild_id])
-		}
-		this.database.break();
-    }
-
-    delGuild()
-
-    {
-
+		globalThis.guild_id = this.config.guild_id = this.guild_id = guild_id;
+		await this.config.save();
     }
 
 	getGuild()
-
     {
         if (this.ready)
-
         {
             if (this.guild_id)
-
             {
                 if (this.bot.guilds.cache.has(this.guild_id))
-
-                {
                     return (this.bot.guilds.cache.get(this.guild_id))
-                }
             }
         }
-
-        return (false)
+        return (null)
     }
 
 	/**

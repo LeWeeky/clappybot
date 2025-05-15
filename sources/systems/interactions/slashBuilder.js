@@ -20,14 +20,14 @@ const { REST, Routes } = require("discord.js");
 const { clappybot } = require("../../main");
 const { interactions } = require("../interactions");
 
-async function build_commands()
-
+/**
+ * 
+ * @param {REST | null} rest 
+ */
+async function buildGlobalCommands(rest = null)
 {
-	const rest = new REST().setToken(process.env.TOKEN);
-	const guild = clappybot.getGuild();
-
-	if (!guild)
-		return;
+	if (!rest)
+		rest = new REST().setToken(process.env.TOKEN);
 
 	try {
 		console.log(`Rechargement des ${interactions.commands.commands_builder.global_cmds.length} (/) commandes globales.`);
@@ -41,6 +41,16 @@ async function build_commands()
 	} catch (error) {
 		console.error(error);
 	}
+}
+
+/**
+ * 
+ * @param {REST | null} rest 
+ */
+async function buildGuildCommands(rest = null)
+{
+	if (!rest)
+		rest = new REST().setToken(process.env.TOKEN);
 
 	try {
 		console.log(`Rechargement des ${interactions.commands.commands_builder.guild_cmds.length} (/) commandes privées.`);
@@ -54,6 +64,18 @@ async function build_commands()
 	} catch (error) {
 		console.error(error);
 	}
+}
+
+async function build_commands()
+
+{
+	const rest = new REST().setToken(process.env.TOKEN);
+
+	buildGlobalCommands(rest);
+
+	if (!globalThis.guild_id)
+		return ;
+	buildGuildCommands(rest);
 }
 
 module.exports = { build_commands }

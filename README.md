@@ -22,46 +22,37 @@ git clone https://github.com/LeWeeky/clappybot.git
 cd clappybot
 ```
 
-You need to create your own `.env`, to do this, you can use this file  `data/template.env`.
+You need to create your own `.env` in the `data` folder, to do this, you can use one of these template files : `data/template.sqlite.env`, `data/template.mysql.env` according to the type of database you want (sqlite for local, mysql for remote).
 
-```
-SERVICE_ID=azerty
-PASSWORD=YOUR_DB_PASSWORD
-TOKEN=YOUR_DISCORD_APP_TOKEN
-API_URI=YOUR_API_URI
-AUTHOR=LeWeeky
-AUTHOR_ID=449712261871829002
-AUTHOR_URL=https://fr.tipeee.com/leweeky
-COMPANY=ClappyCrew
-COMPANY_LOGO=🐏
-COMPANY_URL=https://clappycrew.com
-MAIN_COMMAND=help
-DB_HOST=YOUR_DB_IP_OR_DOMAIN
-```
+`SERVICE_ID` is a custom unique identifier for your bot (useful if you want to manage a large number of bots using containers).
 
-`SERVICE_ID` is a custom unique identifier for your bot (useful if you want to manage a large number of bots using containers) and can be the name of your database user.
+`DB_DRIVER` can be set to `mysql` (for remote db) or `sqlite` (for local db) IP or domain of your database
 
-`PASSWORD` is the password of your user in your database system
+`DB_HOST` (only if `DB_DRIVER=mysql`) IP or domain of your database
+
+`DB_USER` (only if `DB_DRIVER=mysql`) user for your database
+
+`DB_PASSWORD` (only if `DB_DRIVER=mysql`) is the password of user in your database
+
+`DB_PATH` (only if `DB_DRIVER=sqlite`) the path to your local database for example : `DB_PATH=data/main.db`
 
 `TOKEN` is the token of your [discord application](https://discord.com/developers/applications) (bot)
 
 `API_URI` is an optional parameter if you wish to communicate with your api for certain reasons
 
-`AUTHOR` your name or nickname
+`AUTHOR` your name or nickname or discord username
 
 `AUTHOR_ID` id of your discord account
 
 `AUTHOR_URL` your website, guild, youtube channel or other
 
-`COMPANY` the name of your team of developers
+`COMPANY` the name of your team of developers or project
 
-`COMPANY_LOGO` a cute emoji for your team
+`COMPANY_LOGO` a cute emoji for your team or project
 
 `COMPANY_URL` team's website, guild, youtube channel or other
 
-`MAIN_COMMAND` the main command of your bot for example : "/help"
-
-`DB_HOST` IP or domain of your database
+`MAIN_COMMAND` the main command of your bot for example : `MAIN_COMMAND=help`
 
 Set your parameters and save them in the `data/.env` file.
 
@@ -76,9 +67,24 @@ Before the first run, make sure all intents are enabled in your [discord applica
 npm run update
 ```
 
-Once done, you can start as follows
+Once done, you can start as follows:
+
+for 🐧 **Linux** and 🍎 **MacOS** users
 ```
 npm run dev
+```
+
+for 🪟 **Windows** users
+```
+node index.js
+```
+
+If you are a 🪟 **Windows** user it is recommended that you define the debug logs you want in your `.env` file like this:
+```
+DEBUG_INFO=true
+DEBUG_TRACE=true
+DEBUG_ERROR=true
+DEBUG_WARING=true
 ```
 
 Now your bot should be online, congratulations 🎉 ! For the time being, you'll need to define a "main guild", which you can do using `/setguild` command, supplied with the module template. Once this is done, you can set up a channel for announcements (updates, changes) with this command `/setsupport`.
