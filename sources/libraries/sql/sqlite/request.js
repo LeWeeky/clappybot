@@ -16,25 +16,38 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { mysql_exists } = require("../../../libraries/sql/mysql/exists");
-const { clappybot } = require("../../../main");
-
-async function command_exists(cmd_name)
+/**
+ * 
+ * @param {*} connection 
+ * @param {string} request 
+ * @param {any[] | null | false} data 
+ * @returns 
+ */
+async function sqlite_request(connection, request, data = null)
+// TODO set callback method
 {
-	const connection = clappybot.database.connect();
+	try {
+		let rows;
+		const statement = connection.prepare(request);
 
-	if (!connection)
-	{
-		clappybot.database.break(true);
-		console.log("Impossible de vérifier l'existance de la commande :", cmd_name)
+		if (data)
+			rows = statement.all(...data);
+		else
+			rows = statement.all();
+		if (process.env.DEBUG_INFO == "true")
+			console.info('\x1b[32m%s\x1b[0m', `✅ Exécution terminée : ${request}`);
+		return (rows);
+	}
+	catch (error) {
+		if (process.env.DEBUG_ERROR != "false")
+		{
+			console.error('\x1b[31m%s\x1b[0m', `❌ Erreur d'exécution : ${request}`);
+			console.error(error);
+		}
 		return (false);
 	}
-	const result = await mysql_exists(connection, "cmdcreator_commands", "name = ?", [cmd_name]);
-
-	clappybot.database.break();
-	return (result);
 }
 
 module.exports = {
-	command_exists
+	sqlite_request
 }

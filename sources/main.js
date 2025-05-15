@@ -22,17 +22,22 @@
 
 const { Random } = require('./libraries/random_numbers');
 const { Client } = require('./libraries/discord');
-const { ROLES_TABLE, CHANNELS_TABLE, DataBaseLinker, CONFIG_TABLE } = require("./libraries/data");
+const { ROLES_TABLE, CHANNELS_TABLE, CONFIG_TABLE } = require("./libraries/data");
 const { readdirSync } = require('fs');
 const dotenv = require("dotenv");
 const { exit } = require('process');
 const { save_env } = require('./libraries/save_env');
 const { get_owner_id } = require('./libraries/fetching/owner');
 const { get_host_remaining_days } = require('./libraries/fetching/host');
-const { sql_insert } = require('./libraries/sql/insert');
-const { sql_request } = require('./libraries/sql/request');
-const { sql_select } = require('./libraries/sql/select');
-const { version } = require("../package.json")
+const { mysql_insert } = require('./libraries/sql/mysql/insert');
+const { mysql_request } = require('./libraries/sql/mysql/request');
+const { mysql_select } = require('./libraries/sql/mysql/select');
+const { version } = require("../package.json");
+const { DataBaseWrapper } = require('./libraries/models/DataBaseWrapper');
+const { MySQLDriver } = require('./libraries/models/MySQLDriver');
+const { SqliteDriver } = require('./libraries/models/SqliteDriver');
+const { ADriver } = require('./libraries/models/ADriver');
+const { AModel } = require('./libraries/models/AModel');
 
 function getAscii()
 
@@ -110,31 +115,79 @@ class ConfigRoles
     }
 }
 
-class ClappyBot
-
+function showMissingParameters()
 {
 	/**
-	 * @type {string | false | null}
+	 * 
+	 * @param {string} parameter 
+	 */
+	function warn(parameter)
+	{
+		console.warn(`${parameter} is missing`)
+	}
+
+	if (!process.env.DB_HOST)
+		warn("DB_HOST");
+	if (!process.env.DB_USER)
+		warn("DB_HOST");
+	if (!process.env.DB_PASSWORD)
+		warn("DB_HOST");
+	if (!process.env.DB_NAME)
+		warn("DB_HOST");
+}
+
+class Config extends AModel
+{
+	static table = 'configs';
+	static fields = {
+		guild_id: 'string',
+		prefix: 'string',
+		activity: 'integer',
+		status: 'string',
+		twitch: 'string',
+		created_at: 'datetime'
+	};
+}
+
+class ClappyBot
+{
+	/**
+	 * @type {Config}
+	 */
+	config;
+	/**
+	 * @type {string | null}
 	 */
 	guild_id;
 
 	/**
-	 * @type {string | false | null}
+	 * @type {string | null}
 	 */
 	owner_id;
 
 	/**
-	 * @type {DataBaseLinker}
+	 * This class is deprecated and will be
+	 * removed in few updates
+	 * @type {ADriver}
 	 */
 	database;
+
+	/**
+	 * Envelops several databases, for example if you want
+	 * a faster local database for small items and a larger
+	 * remote one linked to your panel
+	 * @type {DataBaseWrapper}
+	 */
+	databases;
 
     constructor ()
 
     {
 		dotenv.config({path: "./data/.env", override: true});
         this.bot = new Client({intents: 3276799});
-        this.guild_id = false;
-        this.owner_id = false;
+		this.databases = new DataBaseWrapper();
+        this.guild_id = null;
+        this.owner_id = null;
         this.id = "abcde";
         this.ready = false;
         this.version = version
@@ -166,21 +219,66 @@ class ClappyBot
     {
 		if (!await CONFIG_TABLE.has(`update`))
 		{
-			console.log("🔥 Nouveau ClappyBot !", clappybot.version)
+			console.log("🔥 Nouveau ClappyBot !", clappybot.version);
 			await CONFIG_TABLE.set(`update`, clappybot.version);
 		}
-		this.database = new DataBaseLinker();
+		switch (process.env.DB_DRIVER)
+		{
+			case "mysql":
+				if (process.env.DB_HOST && process.env.DB_USER
+					&& process.env.DB_PASSWORD && process.env.DB_NAME)
+				{
+					this.databases.add(
+						new MySQLDriver({
+							host: process.env.DB_HOST,
+							user: process.env.DB_USER,
+							password: process.env.DB_PASSWORD,
+							database: process.env.DB_NAME,
+							supportBigNumbers: true,
+							bigNumberStrings: true
+						}),
+						"main"
+					);
+				}
+				else
+				{
+					this.critical("some database parameters are missing");
+					showMissingParameters();
+					process.exit(78);
+				}	
+				break;
+
+			case "sqlite":
+				if (process.env.DB_PATH)
+				{
+					this.databases.add(
+						new SqliteDriver({
+							path: process.env.DB_PATH,
+						}),
+						"main"
+					);
+				}
+				else
+				{
+					this.critical("You have to set DB_PATH when DB_DRIVER=sqlite");
+					process.exit(78);
+				}
+				break;
+
+			default:
+				if (process.env.DB_DRIVER)
+					this.critical(`${process.env.DB_DRIVER} is not a valid driver for the database!`);
+				else
+					this.critical("DB_DRIVER not set!");
+				process.exit(78);
+		}
 		if (process.env.NEW_TOKEN && process.env.NEW_TOKEN.length > 0)
 		{
-			console.log("🔑 Nouveau token")
+			console.log("🔑 Nouveau token");
 			process.env.TOKEN = process.env.NEW_TOKEN;
 			save_env();
 			delete process.env.NEW_TOKEN;
 		}
-		if (!process.env.DB_HOST)
-			this.warning("DB_HOST not set!");
-		if (!process.env.PASSWORD)
-			this.warning("PASSWORD not set!");
 		if (!process.env.SERVICE_ID)
 			this.warning("SERVICE_ID not set!");
 		if (!process.env.TOKEN || process.env.TOKEN.length == 0)
@@ -216,25 +314,25 @@ class ClappyBot
 		else
 			this.id = "EMPTY";
 
-		const row =	await sql_select(clappybot.database.connect(), "myclappybot", "guild_id")
-		clappybot.database.break();
-		if (row && row.length > 0)
+		const main_db = clappybot.databases.select("main");
+
+		if (main_db)
 		{
-			globalThis.guild_id = row[0].guild_id
-			this.guild_id = globalThis.guild_id
+			this.database = main_db;
+			Config.use(this.database);
+			await Config.init();
+
+			this.config = await Config.first() ?? await Config.create({
+					prefix: "+",
+					activity: 1,
+					twitch: "leweeky"
+				});
+		
+			globalThis.guild_id = this.guild_id = this.config.guild_id;
+			this.prefix = this.config.prefix ?? '+';
 		}
 
-       this.owner_id = await get_owner_id(process.env.SERVICE_ID);
-
-        let prefix = await CONFIG_TABLE.get(`bot.prefix`);
-
-        if (!prefix) 
-        {
-            prefix = "+";
-            await CONFIG_TABLE.set(`bot.prefix`, "+");
-        }
-
-        this.prefix = prefix;
+       	this.owner_id = await get_owner_id(process.env.SERVICE_ID);
 
         await this.reload_modules();
         this.ready = true;
@@ -279,19 +377,19 @@ class ClappyBot
 		globalThis.guild_id = guild_id;
 
 		const connection = this.database.connect();
-		const row = await sql_request(connection,
+		const row = await mysql_request(connection,
 			"SELECT EXISTS(SELECT 1 FROM myclappybot) AS element_exists"
 		);
 
 		if (row && row.length)
 		{
-			await sql_request(connection,
+			await mysql_request(connection,
 				"UPDATE myclappybot SET guild_id = ?",
 				[guild_id])
 		}
 		else
 		{
-			await sql_insert(connection, "myclappybot", "guild_id", [guild_id])
+			await mysql_insert(connection, "myclappybot", "guild_id", [guild_id])
 		}
 		this.database.break();
     }
@@ -302,7 +400,7 @@ class ClappyBot
 
     }
 
-    getGuild()
+	getGuild()
 
     {
         if (this.ready)

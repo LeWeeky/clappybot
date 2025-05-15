@@ -23,7 +23,7 @@
  * @param {any[] | null | false} data 
  * @returns 
  */
-async function sql_request(connection, request, data = null)
+async function mysql_request(connection, request, data = null)
 {
 	try {
 		let rows;
@@ -56,5 +56,5 @@ async function sql_request(connection, request, data = null)
 }
 
 module.exports = {
-	sql_request
+	mysql_request
 }

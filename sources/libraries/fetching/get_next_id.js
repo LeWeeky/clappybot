@@ -16,14 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { sql_select } = require("../sql/select");
+const { mysql_select } = require("../sql/select");
 const { clappybot } = require("../../main");
 
 async function get_next_id(target)
 {
 	try {
 		const connection = clappybot.database.connect();
-		const rows = await sql_select(connection, "next_ids", "next_id", "module = ?", [target]);
+		const rows = await mysql_select(connection, "next_ids", "next_id", "module = ?", [target]);
 
 		if (rows[0])
 		{

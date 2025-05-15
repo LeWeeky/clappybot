@@ -25,45 +25,24 @@
  * @param {any[] | null | false} data 
  * @returns 
  */
-async function sql_select(connection, table, target, where = null, data = null, limit = 0)
+async function sqlite_select(connection, table, target, where = null, data = null, limit = 0)
 {
 	try {
 		let rows;
+		let statement;
 		let limit_query = '';
 
 		if (limit > 0)
 			limit_query = `LIMIT ${limit}`
 
 		if (where)
-		{
-			if (data)
-			{
-				const [rows_, fields] = await connection.promise()
-				.execute(`SELECT ${target} FROM ${table} WHERE ${where} ${limit_query}`, data);
-				rows = rows_;
-			}
-			else
-			{
-				const [rows_, fields] = await connection.promise()
-				.query(`SELECT ${target} FROM ${table} WHERE ${where} ${limit_query}`);
-				rows = rows_;
-			}
-		}
+			statement = connection.prepare(`SELECT ${target} FROM ${table} WHERE ${where} ${limit_query}`);
 		else
-		{
-			if (data)
-				{
-					const [rows_, fields] = await connection.promise()
-					.execute(`SELECT ${target} FROM ${table}`, data);
-					rows = rows_;
-				}
-				else
-				{
-					const [rows_, fields] = await connection.promise()
-					.query(`SELECT ${target} FROM ${table}`);
-					rows = rows_;
-				}
-		}
+			statement = connection.prepare((`SELECT ${target} FROM ${table}`));
+		if (data)
+			rows = statement.all(...data);
+		else
+			rows = statement.all();
 		if (process.env.DEBUG_INFO == "true")
 			console.info('\x1b[32m%s\x1b[0m', `✅ Récupérations de ${target} de la table ${table}`);
 		return (rows);
@@ -79,5 +58,5 @@ async function sql_select(connection, table, target, where = null, data = null, 
 }
 
 module.exports = {
-	sql_select
+	sqlite_select
 }

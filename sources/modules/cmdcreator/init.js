@@ -17,18 +17,20 @@
  */
 
 
-const { sql_create_table } = require("../../libraries/sql/create");
+const { mysql_create_table } = require("../../libraries/sql/mysql/create");
 
 async function init_module(connection)
 {
-	await sql_create_table(connection, "cmdcreator_commands", "ID INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, name VARCHAR(32), description VARCHAR(100), public BIT DEFAULT 0, ephemeral BIT DEFAULT 0");
+	// temporarily unavailable
+	return ;
+	await mysql_create_table(connection, "cmdcreator_commands", "ID INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, name VARCHAR(32), description VARCHAR(100), public BIT DEFAULT 0, ephemeral BIT DEFAULT 0");
 
-	await sql_create_table(connection, 
+	await mysql_create_table(connection, 
 		"cmdcreator_commands_values", 
 		"ID INT UNSIGNED REFERENCES cmdcreator_commands(ID) ON DELETE CASCADE, message VARCHAR(4096), embed_color MEDIUMINT UNSIGNED DEFAULT 3092790, embed_logo TEXT, embed_banner TEXT, embed_title VARCHAR(256), embed_author VARCHAR(256), embed_author_url TEXT, embed_author_avatar VARCHAR(2048), embed_description VARCHAR(4096), embed_footer VARCHAR(2048), embed_footer_url TEXT, embed_footer_logo TEXT"
 	);
 
-	await sql_create_table(connection, "cmdcreator_alias", "ID INT UNSIGNED REFERENCES cmdcreator_commands(ID) ON DELETE CASCADE, name VARCHAR(32)");
+	await mysql_create_table(connection, "cmdcreator_alias", "ID INT UNSIGNED REFERENCES cmdcreator_commands(ID) ON DELETE CASCADE, name VARCHAR(32)");
 }
 
 module.exports = {

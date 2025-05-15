@@ -22,15 +22,18 @@
  * @param {string} table 
  * @param {string} target 
  * @param {string} where 
- * @param {any[]} data 
+ * @param {any[] | null} data 
  * @returns 
  */
-async function sql_update(connection, table, target, where, data)
+async function sqlite_update(connection, table, target, where, data = null)
 {
     try {
-        await connection.promise().execute(`UPDATE ${table} SET ${target} WHERE ${where}`,
-            data
-        );
+        const statement = connection.prepare(`UPDATE ${table} SET ${target} WHERE ${where}`);
+
+		if (data)
+			statement.run(...data)
+		else
+			statement.run()
 		if (process.env.DEBUG_INFO == "true")
 	    	console.log('\x1b[32m%s\x1b[0m', `✅ Table ${table} mise à jour`);
         return (null);
@@ -46,5 +49,5 @@ async function sql_update(connection, table, target, where, data)
 }
 
 module.exports = {
-    sql_update
+    sqlite_update
 }

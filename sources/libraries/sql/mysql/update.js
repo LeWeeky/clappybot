@@ -19,33 +19,39 @@
 /**
  * 
  * @param {*} connection 
- * @param {string} name 
- * @param {string} content 
- * @param {string | null} more 
+ * @param {string} table 
+ * @param {string} target 
+ * @param {string} where 
+ * @param {any[] | null} data 
  * @returns 
  */
-async function sql_create_table(connection, name, content, more = null)
+async function mysql_update(connection, table, target, where, data = null)
 {
     try {
-		if (more)
-			await connection.promise().query(`CREATE TABLE IF NOT EXISTS ${name} (${content}) ${more}`);
-        else
-			await connection.promise().query(`CREATE TABLE IF NOT EXISTS ${name} (${content})`);
-	    
+		if (!data)
+		{
+			 await connection.promise().execute(`UPDATE ${table} SET ${target} WHERE ${where}`);
+		}
+		else
+		{
+			 await connection.promise().execute(`UPDATE ${table} SET ${target} WHERE ${where}`,
+				data
+			);
+		}
 		if (process.env.DEBUG_INFO == "true")
-			console.info('\x1b[32m%s\x1b[0m', `✅ Table ${name} crée`);
+	    	console.log('\x1b[32m%s\x1b[0m', `✅ Table ${table} mise à jour`);
         return (null);
     }
     catch (error) {
 		if (process.env.DEBUG_ERROR != "false")
         {
-			console.error('\x1b[31m%s\x1b[0m', `❌ Erreur : Table ${name}`);
-        	console.error(error);
+			console.error('\x1b[31m%s\x1b[0m', `❌ Erreur : mise à jour de la Table ${table}`);
+       	 	console.error(error);
 		}
         return (error);
     }
 }
 
 module.exports = {
-    sql_create_table
+    mysql_update
 }

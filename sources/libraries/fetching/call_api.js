@@ -22,7 +22,7 @@
  */
 async function api_call(call)
 {
-	if (!process.env.API_URI)
+	if (!process.env.API_URI || process.env.API_URI.length == 0)
 	{
 		console.warn('\x1b[31m%s\x1b[0m', "[ ! WARING ! ]: API_URI is not set!")
 		return (null);

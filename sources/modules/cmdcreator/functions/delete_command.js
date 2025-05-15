@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { sql_delete } = require("../../../libraries/sql/delete");
+const { mysql_delete } = require("../../../libraries/sql/mysql/delete");
 const { clappybot } = require("../../../main");
 
 async function delete_command(cmd_id)
@@ -28,7 +28,7 @@ async function delete_command(cmd_id)
 		clappybot.database.break(true);
 		return (false);
 	}
-	if (await sql_delete(connection, "cmdcreator_commands", "ID = ?", [cmd_id]))
+	if (await mysql_delete(connection, "cmdcreator_commands", "ID = ?", [cmd_id]))
 	{
 		clappybot.database.break(true);
 		return (false);

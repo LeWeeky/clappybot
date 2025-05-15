@@ -19,21 +19,27 @@
 /**
  * 
  * @param {*} connection 
- * @param {string} table 
- * @param {string} where 
+ * @param {*} table 
+ * @param {*} where 
  * @param {any[] | null} data 
- * @returns {Promise<boolean>}
+ * @returns {Promise<number>}
  */
-async function sql_exists(connection, table, where, data = null)
+async function mysql_count(connection, table, where = null, data = null)
 {
-	console.log(where)
 	try {
 		let rows
-
-		if (data)
+		
+		if (!where)
 		{
 			const [res_rows, fields] = await connection
-				.promise().execute(`SELECT EXISTS(SELECT 1 FROM ${table} WHERE ${where}) AS element_exists`,
+				.promise().query(`SELECT COUNT(*) AS occurrences FROM ${table}`
+			);
+			rows = res_rows;
+		}
+		else if (data)
+		{
+			const [res_rows, fields] = await connection
+				.promise().execute(`SELECT COUNT(*) AS occurrences FROM ${table} WHERE ${where}`,
 				data
 			);
 			rows = res_rows;
@@ -41,28 +47,29 @@ async function sql_exists(connection, table, where, data = null)
 		else
 		{
 			const [res_rows, fields] = await connection
-				.promise().query(`SELECT EXISTS(SELECT 1 FROM ${table} WHERE ${where}) AS element_exists`
+				.promise().query(`SELECT COUNT(*) AS occurrences FROM ${table} WHERE ${where}`
 			);
 			rows = res_rows;
 		}
+
 		if (process.env.DEBUG_INFO == "true")
-			console.info('\x1b[32m%s\x1b[0m', `✅ Véréfication de l'existance d'un élément dans ${table} réussi`);
+			console.info('\x1b[32m%s\x1b[0m', `✅ Comptage dans ${table} réussi`);
 		if (!rows)
-			return (false);
+			return (-1);
 		if (!rows[0])
-			return (false);
-		return (rows[0].element_exists);
+			return (0);
+		return (rows[0].occurrences);
 	}
 	catch (error) {
 		if (process.env.DEBUG_ERROR != "false")
 		{
-			console.error('\x1b[31m%s\x1b[0m', `❌ Erreur : Véréfication de l'existance d'un élément dans ${table} ratée`);
+			console.error('\x1b[31m%s\x1b[0m', `❌ Erreur : Comptage raté dans ${table}`);
 			console.error(error);
 		}
-		return (false);
+		return (-1);
 	}
 }
 
 module.exports = {
-	sql_exists
+	mysql_count
 }

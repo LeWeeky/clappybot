@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { sql_select } = require("../../../libraries/sql/select");
+const { mysql_select } = require("../../../libraries/sql/mysql/select");
 const { clappybot } = require("../../../main");
 
 async function get_command_bool(cmd_id, target)
@@ -28,7 +28,7 @@ async function get_command_bool(cmd_id, target)
 		clappybot.database.break(true)
 		return (true);
 	}
-	const row = await sql_select(connection, "cmdcreator_commands", target, `ID = '${cmd_id}'`);
+	const row = await mysql_select(connection, "cmdcreator_commands", target, `ID = '${cmd_id}'`);
 	clappybot.database.break();
 	if (row && row[0])
 		return (row[0][target][0] !== 0x00);

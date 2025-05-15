@@ -24,34 +24,34 @@
  * @param {any[] | null} data 
  * @returns {Promise<number>}
  */
-async function sql_count(connection, table, where, data = null)
+async function sqlite_count(connection, table, where = null, data = null)
 {
 	try {
-		let rows
+		let row
+		let statement
 		
-		if (data)
+		if (!where)
 		{
-			const [res_rows, fields] = await connection
-				.promise().execute(`SELECT COUNT(*) AS occurrences FROM ${table} WHERE ${where}`,
-				data
+			statement = connection
+				.prepare(`SELECT COUNT(*) AS occurrences FROM ${table}`
 			);
-			rows = res_rows;
 		}
 		else
 		{
-			const [res_rows, fields] = await connection
-				.promise().query(`SELECT COUNT(*) AS occurrences FROM ${table} WHERE ${where}`
+			statement = connection
+				.prepare(`SELECT COUNT(*) AS occurrences FROM ${table} WHERE ${where}`
 			);
-			rows = res_rows;
-		}
 
+		}
+		if (data)
+			row = statement.get(...data);
+		else
+			row = statement.get();
 		if (process.env.DEBUG_INFO == "true")
 			console.info('\x1b[32m%s\x1b[0m', `✅ Comptage dans ${table} réussi`);
-		if (!rows)
+		if (!row)
 			return (-1);
-		if (!rows[0])
-			return (0);
-		return (rows[0].occurrences);
+		return (row.occurrences);
 	}
 	catch (error) {
 		if (process.env.DEBUG_ERROR != "false")
@@ -64,5 +64,5 @@ async function sql_count(connection, table, where, data = null)
 }
 
 module.exports = {
-	sql_count
+	sqlite_count
 }

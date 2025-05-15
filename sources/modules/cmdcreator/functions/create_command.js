@@ -17,7 +17,7 @@
  */
 
 const { colors } = require("../../../libraries/colors");
-const { sql_insert } = require("../../../libraries/sql/insert");
+const { mysql_insert } = require("../../../libraries/sql/mysql/insert");
 const { clappybot } = require("../../../main");
 const { get_command_id } = require("./get_command");
 
@@ -30,7 +30,7 @@ async function create_command(cmd_name)
 		clappybot.database.break(true);
 		return (false);
 	}
-	if (await sql_insert(connection, "cmdcreator_commands", "name", [cmd_name]))
+	if (await mysql_insert(connection, "cmdcreator_commands", "name", [cmd_name]))
 	{
 		clappybot.database.break(true);
 		return (false);
@@ -41,7 +41,7 @@ async function create_command(cmd_name)
 		clappybot.database.break(true);
 		return (false);
 	}
-	if (await sql_insert(connection, "cmdcreator_commands_values", "ID, embed_color", [cmd_id, colors.none]))
+	if (await mysql_insert(connection, "cmdcreator_commands_values", "ID, embed_color", [cmd_id, colors.none]))
 	{
 		clappybot.database.break(true);
 		return (false);

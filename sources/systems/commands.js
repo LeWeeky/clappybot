@@ -195,7 +195,7 @@ class Commands extends AActions
 			}
 		});
 		this.load_addon();
-		await this.load_cmdcreator();
+		// await this.load_cmdcreator(); temporarily unavailable
 		console.log(`${this._list.length} commandes ont bien été chargées`)
 	}
 

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { sql_update } = require("../../../libraries/sql/update");
+const { mysql_update } = require("../../../libraries/sql/mysql/update");
 const { clappybot } = require("../../../main");
 
 /**
@@ -68,7 +68,7 @@ async function update_command(cmd_id, target, value)
 		return (false);
 	}
 
-	if (await sql_update(connection, get_table(target), `${target} = ?`, "ID = ?", [value, cmd_id]))
+	if (await mysql_update(connection, get_table(target), `${target} = ?`, "ID = ?", [value, cmd_id]))
 	{
 		clappybot.database.break(true);
 		return (false);

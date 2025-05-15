@@ -23,7 +23,7 @@ const { msg_cmd_reply } = require('../../libraries/messages/msg_cmd_reply')
 const { isAdmin } = require('../../libraries/permissions/guild_admin')
 const { colors, toIntColor } = require('../../libraries/colors')
 const { EmbedBuilder, SlashCommandBuilder } = require('../../libraries/discord')
-const { sql_select } = require('../../libraries/sql/select')
+const { mysql_select } = require('../../libraries/sql/mysql/select')
 const { clappybot } = require('../../main')
 const { interactions } = require('../../systems/interactions')
 const { build_commands } = require('../../systems/interactions/slashBuilder')
@@ -1012,7 +1012,7 @@ async function parse(interaction, cmd, args)
 
 		{
 			const connection = clappybot.database.connect();
-			const cmds = await sql_select(connection, "cmdcreator_commands", "name");
+			const cmds = await mysql_select(connection, "cmdcreator_commands", "name");
 
 			if (!cmds || cmds.length == 0)
 			{

@@ -16,12 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { sql_insert, sql_last_insert_id } = require("../sql/insert");
-const { sql_update } = require("../sql/update");
-const { DataBaseLinker } = require("../data");
-const { sql_create_table } = require("../sql/create");
-const { sql_select } = require("../sql/select");
-const { sql_delete } = require("../sql/delete");
+const { ADriver } = require("./ADriver");
 
 class AModel {
 	/**
@@ -38,7 +33,7 @@ class AModel {
 	static table = null;
 	
 	/**
-	 * @type {DataBaseLinker | null}
+	 * @type {ADriver | null}
 	 */
 	static db = null;
 
@@ -64,7 +59,7 @@ class AModel {
 
 	/**
 	 * Defines database to be used
-	 * @param {DataBaseLinker} db
+	 * @param {ADriver} db
 	 */
 	static use(db)
 	{
@@ -96,12 +91,7 @@ class AModel {
 			});
 			const placeholders = fields_to_insert.join(', ');
 
-			const connection = this.constructor.db.connect();
-			await sql_insert(connection,
-				this.constructor.table, placeholders, values
-			);
-			this.id = await sql_last_insert_id(connection);
-			this.constructor.db.break();
+			this.id = await this.constructor.db.insert(this.constructor.table, placeholders, values);
 		}
 		else
 		{
@@ -125,11 +115,10 @@ class AModel {
 			})
 
 			values.push(this.id)
-			await sql_update(this.constructor.db.connect(),
+			await this.constructor.db.update(
 				this.constructor.table, placeholders, "id = ?", values
 			);
 		}
-		this.constructor.db.break();
 		for (let field in this.constructor.fields)
 			this.#old_values[field] = this[field];
 		return (true);
@@ -144,10 +133,9 @@ class AModel {
 		}
 		if (this.id)
 		{
-			await sql_delete(this.constructor.db.connect(),
+			await this.constructor.db.delete(
 				 this.constructor.table, "id = ?", [this.id]
 			)
-			this.constructor.db.break();
 		}
 		return (true);
 	}
@@ -180,10 +168,9 @@ class AModel {
 			values.push(fields[field])
 		}
 
-		await sql_delete(this.db.connect(),
+		await this.db.delete(
 			this.table, placeholders, values,
 		);
-		this.db.break();
 		return (true);
 	}
 
@@ -218,6 +205,9 @@ class AModel {
 			case "size": // [ ! ] Not supported by PostgreSQL / SQLite
 				type = "UNSIGNED INT"
 				break;
+			case "bigint": // [ ! ] Not supported by PostgreSQL / SQLite
+				type = "UNSIGNED BIGINT"
+				break;
 			case "datetime":
 				type = "DATETIME DEFAULT CURRENT_TIMESTAMP"
 				break;
@@ -245,6 +235,11 @@ class AModel {
 			console.error("db is not set for:", this.constructor.table);
 			return (false);
 		}
+		if (!this.table)
+		{
+			console.error("table name is not set for:", this);
+			return (false);
+		}
 		let query = `id INT AUTO_INCREMENT PRIMARY KEY,\n`
 		let count = 0;
 		for (let field in this.fields)
@@ -255,10 +250,9 @@ class AModel {
 			count++;
 		}
 		// query = query + "\n)";
-		await sql_create_table(this.db.connect(),
+		await this.db.create(
 			this.table, query
 		);
-		this.db.break()
 		return (true);
 	}
 
@@ -274,10 +268,9 @@ class AModel {
 			return ([]);
 		}
 
-		const row = await sql_select(this.db.connect(),
+		const row = await this.db.select(
 			this.table, "*"
 		);
-		this.db.break();
 		if (row.length == 0)
 			return ([]);
 		const models = [];
@@ -315,10 +308,9 @@ class AModel {
 			values.push(fields[field])
 		}
 
-		const row = await sql_select(this.db.connect(),
+		const row = await this.db.select(
 			this.table, "*", placeholders, values, limit
 		);
-		this.db.break();
 		if (row.length == 0)
 			return ([]);
 		const models = [];
@@ -340,6 +332,26 @@ class AModel {
 		if (result.length == 0)
 			return (null);
 		return (result[0])
+	}
+
+	/**
+	 * Returns first element as new instance
+	 * @returns {Promise<AModel | null>}
+	 */
+	static async first()
+	{
+		if (!this.db)
+		{
+			console.error("db is not set for:", this.table);
+			return (null);
+		}
+		const row = await this.db.select(
+			this.table, "*", null, null, 1
+		);
+
+		if (row.length == 0)
+			return (null);
+		return (new this(row[0]))
 	}
 
 	/**

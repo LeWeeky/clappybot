@@ -19,26 +19,27 @@
 /**
  * 
  * @param {*} connection 
- * @param {*} table 
- * @param {*} where 
- * @param {any[] | null} data 
+ * @param {string} name 
+ * @param {string} content 
+ * @param {string | null} more 
  * @returns 
  */
-async function sql_delete(connection, table, where, data = null)
+async function mysql_create_table(connection, name, content, more = null)
 {
     try {
-		if (data)
-			await connection.promise().execute(`DELETE FROM ${table} WHERE ${where}`, data);
-		else
-        	await connection.promise().query(`DELETE FROM ${table} WHERE ${where}`);
+		if (more)
+			await connection.promise().query(`CREATE TABLE IF NOT EXISTS ${name} (${content}) ${more}`);
+        else
+			await connection.promise().query(`CREATE TABLE IF NOT EXISTS ${name} (${content})`);
+	    
 		if (process.env.DEBUG_INFO == "true")
-	    	console.info('\x1b[32m%s\x1b[0m', `✅ Element supprimé dans la table : ${table}`);
+			console.info('\x1b[32m%s\x1b[0m', `✅ Table ${name} crée`);
         return (null);
     }
     catch (error) {
 		if (process.env.DEBUG_ERROR != "false")
-		{
-			console.error('\x1b[31m%s\x1b[0m', `❌ Erreur : Impossible de supprimer l'élement souhaité dans la table ${table}`);
+        {
+			console.error('\x1b[31m%s\x1b[0m', `❌ Erreur : Table ${name}`);
         	console.error(error);
 		}
         return (error);
@@ -46,5 +47,5 @@ async function sql_delete(connection, table, where, data = null)
 }
 
 module.exports = {
-    sql_delete
+    mysql_create_table
 }

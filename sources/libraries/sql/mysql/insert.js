@@ -23,7 +23,7 @@
  * @param {any[]} data 
  * @returns 
  */
-async function sql_insert(connection, table, target, data)
+async function mysql_insert(connection, table, target, data)
 {
     let targets = "?";
 
@@ -59,7 +59,7 @@ async function sql_insert(connection, table, target, data)
     }
 }
 
-async function sql_last_insert_id(connection)
+async function mysql_last_insert_id(connection)
 {
     try {
 		const [row, field] = await connection.promise().execute(
@@ -67,7 +67,6 @@ async function sql_last_insert_id(connection)
 		);
 		if (process.env.DEBUG_INFO == "true")
         	console.info('\x1b[32m%s\x1b[0m', `✅ ID de la dernière insertion`);
-		console.log(row)
 		if (!row || row.length == 0)
 			return (0);
 		return (row[0].id)
@@ -83,5 +82,5 @@ async function sql_last_insert_id(connection)
 }
 
 module.exports = {
-    sql_insert, sql_last_insert_id
+    mysql_insert, mysql_last_insert_id
 }
