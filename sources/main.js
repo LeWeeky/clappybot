@@ -29,9 +29,6 @@ const { exit } = require('process');
 const { save_env } = require('./libraries/save_env');
 const { get_owner_id } = require('./libraries/fetching/owner');
 const { get_host_remaining_days } = require('./libraries/fetching/host');
-const { mysql_insert } = require('./libraries/sql/mysql/insert');
-const { mysql_request } = require('./libraries/sql/mysql/request');
-const { mysql_select } = require('./libraries/sql/mysql/select');
 const { version } = require("../package.json");
 const { DataBaseWrapper } = require('./libraries/models/DataBaseWrapper');
 const { MySQLDriver } = require('./libraries/models/MySQLDriver');
@@ -331,7 +328,6 @@ class ClappyBot
 			globalThis.guild_id = this.guild_id = this.config.guild_id;
 			this.prefix = this.config.prefix ?? '+';
 		}
-
        	this.owner_id = await get_owner_id(process.env.SERVICE_ID);
 
         await this.reload_modules();

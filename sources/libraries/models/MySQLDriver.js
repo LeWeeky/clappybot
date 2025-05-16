@@ -71,6 +71,11 @@ class MySQLDriver extends ADriver
 			this._connection.end();
 	}
 
+	getAutoIncrementQuery()
+	{
+		return ("id INT AUTO_INCREMENT PRIMARY KEY");
+	}
+
 	/**
 	 * 
 	 * @param {string} request 

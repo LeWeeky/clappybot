@@ -240,7 +240,7 @@ class AModel {
 			console.error("table name is not set for:", this);
 			return (false);
 		}
-		let query = `id INT AUTO_INCREMENT PRIMARY KEY,\n`
+		let query = `${this.db.getAutoIncrementQuery()},\n`
 		let count = 0;
 		for (let field in this.fields)
 		{

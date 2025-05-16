@@ -71,6 +71,11 @@ class ADriver
 		this.#throw("destroy")
 	}
 
+	getAutoIncrementQuery()
+	{
+		this.#throw("getAutoIncrementQuery")
+	}
+
 	/**
 	 * 
 	 * @param {string} request 

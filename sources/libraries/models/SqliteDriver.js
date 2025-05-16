@@ -59,6 +59,11 @@ class SqliteDriver extends ADriver
 			this._connection.close();
 	}
 
+	getAutoIncrementQuery()
+	{
+		return ("id INTEGER PRIMARY KEY AUTOINCREMENT");
+	}
+
 	/**
 	 * 
 	 * @param {string} request 
