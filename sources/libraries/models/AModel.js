@@ -83,14 +83,13 @@ class AModel {
 			const fields_to_insert = [];
 			const values = [];
 			fields.forEach(field => {
-				if (this[field])
+				if (this[field] !== null)
 				{
 					fields_to_insert.push(field)
 					values.push(this[field])
 				}
 			});
 			const placeholders = fields_to_insert.join(', ');
-
 			this.id = await this.constructor.db.insert(this.constructor.table, placeholders, values);
 		}
 		else
