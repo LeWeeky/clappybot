@@ -56,8 +56,12 @@ You need to create your own `.env` in the `data` folder, to do this, you can use
 
 Set your parameters and save them in the `data/.env` file.
 
-Now we need a template for our first module, don't worry we can clone this one : 
+Now we need a first module for the settigns, don't worry we can clone this one : 
+```
+git clone https://github.com/LeWeeky/settings-module-for-clappybot.git sources/modules/mybotsettings
+```
 
+This is an option, but you'll probably want to create your own module to add your functionalities. That's why there's a module template that will be a great help in developing your bot (don't forget to read the [README.md](https://github.com/LeWeeky/Module-template-for-clappybot)):
 ```
 git clone https://github.com/LeWeeky/Module-template-for-clappybot.git sources/modules/template
 ```
