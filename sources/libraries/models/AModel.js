@@ -390,6 +390,22 @@ class AModel {
 	}
 
 	/**
+	 * Returns first element that corresponding
+	 * to the requested fields as new instance
+	 * or create a new one if not found
+	 * @param {{}} fields
+	 * @returns {Promise<this>}
+	 */
+	static async firstByOrCreate(fields)
+	{
+		const user = await this.firstBy(fields);
+
+		if (user)
+			return (user);
+		return (new this(fields));
+	}
+
+	/**
 	 * Returns first element as new instance
 	 * @returns {Promise<AModel | null>}
 	 */
