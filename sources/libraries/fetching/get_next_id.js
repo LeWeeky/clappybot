@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { mysql_select } = require("../sql/select");
+const { mysql_select } = require("../sql/mysql/select");
 const { clappybot } = require("../../main");
 
 async function get_next_id(target)
