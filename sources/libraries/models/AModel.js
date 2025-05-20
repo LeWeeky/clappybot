@@ -17,28 +17,56 @@
  */
 
 const { ADriver } = require("./ADriver");
+const { toSingularize } = require("./pluralization/singularize");
 
 class AModel {
 	/**
+	 * Defines the elements to which this model belongs. This will create
+	 * new columns to link this model to its owners. 
+	 *
+	 * For example, if you make this model belong to the ‘authors’ model,
+	 * an ‘author_id’ column will be created.
+	 * @type {string[]}
+	 */
+	static belongs_to = [];
+	/**
+	 * @type {AModel[]}
+	 */
+	static has_one = [];
+	/**
+	 * @type {AModel[]}
+	 */
+	static has_many = [];
+	/**
 	 * @type {number}
+	 * Unique id of element
 	 */
 	id = 0;
 	/**
 	 * @type {Object}
+	 * List of columns
 	 */
 	static fields = {};
 	/**
 	 * @type {string | null}
+	 * Name of the table inside database
 	 */
 	static table = null;
+	/**
+	 * @type {string | null}
+	 * Name when it's single
+	 */
+	static single = null;
 	
 	/**
 	 * @type {ADriver | null}
+	 * Database driver to use
 	 */
 	static db = null;
 
 	/**
 	 * @type {{}}
+	 * Save old values
 	 */
 	#old_values = {};
 
@@ -123,6 +151,29 @@ class AModel {
 		return (true);
 	}
 
+	/**
+	 * Recovers all the models it owns
+	 */
+	async fetchStuff()
+	{
+		if (this.id)
+		{
+			const target = {};
+			target[`${this.constructor.single}_id`] = this.id;
+			// TODO do it with a single request
+			for (let i = 0; i < this.constructor.has_one.length; i++)
+			{
+				this[this.constructor.has_one[i].single]
+				= await this.constructor.has_one[i].firstBy(target);
+			}
+			for (let i = 0; i < this.constructor.has_many.length; i++)
+			{
+				this[this.constructor.has_many[i].table]
+				= await this.constructor.has_many[i].findBy(target);
+			}
+		}
+	}
+
 	async delete()
 	{
 		if (!this.constructor.db)
@@ -199,7 +250,7 @@ class AModel {
 		switch (this.fields[field])
 		{
 			case "integer":
-				type = "INT"
+				type = "INT DEFAULT 0"
 				break;
 			case "size": // [ ! ] Not supported by PostgreSQL / SQLite
 				type = "UNSIGNED INT"
@@ -239,6 +290,12 @@ class AModel {
 			console.error("table name is not set for:", this);
 			return (false);
 		}
+		this.single = toSingularize(this.table)
+		for (let i = 0; i < this.belongs_to.length; i++)
+		{
+			const id = `${toSingularize(this.belongs_to[i])}_id`;
+			this.fields[id] = "integer"
+		}
 		let query = `${this.db.getAutoIncrementQuery()},\n`
 		let count = 0;
 		for (let field in this.fields)
@@ -248,7 +305,6 @@ class AModel {
 			query = query + "  " + this.toQueryType(field);
 			count++;
 		}
-		// query = query + "\n)";
 		await this.db.create(
 			this.table, query
 		);
@@ -283,6 +339,7 @@ class AModel {
 	 * to the requested fields as new instances
 	 * @param {{}} fields
 	 * @param {number} limit
+	 * @returns {Promise<new() this[] | never[]>}
 	 */
 	static async findBy(fields, limit = 0)
 	{
@@ -306,7 +363,6 @@ class AModel {
 				placeholders = ` ${placeholders} AND ${field} = ?`;
 			values.push(fields[field])
 		}
-
 		const row = await this.db.select(
 			this.table, "*", placeholders, values, limit
 		);
@@ -322,7 +378,7 @@ class AModel {
 	 * Returns first element that corresponding
 	 * to the requested fields as new instance
 	 * @param {{}} fields
-	 * @returns {Promise<AModel | null>}
+	 * @returns {Promise<this | null>}
 	 */
 	static async firstBy(fields)
 	{
