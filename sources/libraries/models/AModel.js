@@ -402,7 +402,7 @@ class AModel {
 
 		if (user)
 			return (user);
-		return (new this(fields));
+		return (await this.create(fields));
 	}
 
 	/**
