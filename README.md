@@ -34,7 +34,7 @@ You need to create your own `.env` in the `data` folder, to do this, you can use
 
 `DB_PASSWORD` (only if `DB_DRIVER=mysql`) is the password of user in your database
 
-`DB_PATH` (only if `DB_DRIVER=sqlite`) the path to your local database for example : `DB_PATH=data/main.db`
+`DB_PATH` (only if `DB_DRIVER=sqlite`) the path to your local database for example : `DB_PATH=data/main.sqlite`
 
 `TOKEN` is the token of your [discord application](https://discord.com/developers/applications) (bot)
 
