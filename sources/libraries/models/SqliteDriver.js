@@ -124,11 +124,12 @@ class SqliteDriver extends ADriver
 	 * @param {string} element 
 	 * @param {string | null} where 
 	 * @param {any[] | null} data 
+	 * @param {number} limit 
 	 * @returns {Promise<any[]>}
 	 */
-	async select(table, element, where = null, data = null)
+	async select(table, element, where = null, data = null, limit = 0)
 	{
-		const row = await sqlite_select(this.connect(), table, element, where, data);
+		const row = await sqlite_select(this.connect(), table, element, where, data, limit);
 		this.break();
 		return (row);
 	}
