@@ -175,7 +175,7 @@ class Interactions
 			await this.channelsUpdate.load();
 			await this.voicesStateUpdate.load();
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 		}
 	}
 

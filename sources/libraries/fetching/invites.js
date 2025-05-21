@@ -19,7 +19,7 @@
 async function is_invite_from_this_guild(guild, invide_code)
 {
     const invite_list = await guild.invites.fetch().catch(error => {
-        console.log("Impossoble de récupérer les invitations")
+        console.error("unable to retrieve invitations")
 		return (false);
     });
 	if (!invite_list)
@@ -63,7 +63,7 @@ async function get_invites(guild)
 {
     const invites = {};
     const invite_list = await guild.invites.fetch().catch(error => {
-        console.log("Impossoble de récupérer les invitations")
+        console.error("unable to retrieve invitations")
 		return (false);
     });
 	if (!invite_list)

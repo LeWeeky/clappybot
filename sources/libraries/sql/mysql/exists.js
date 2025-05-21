@@ -26,7 +26,6 @@
  */
 async function mysql_exists(connection, table, where, data = null)
 {
-	console.log(where)
 	try {
 		let rows
 

@@ -112,9 +112,7 @@ class MySQLDriver extends ADriver
 	{
 		let last_id = 0;
 		const connect = this.connect();
-		console.log("insert locks", this._locks)
 		await mysql_insert(connect, table, element, data);
-		console.log("last_id locks", this._locks)
 		if (get_last_id)
 			last_id = await mysql_last_insert_id(connect);
 		this.break();
