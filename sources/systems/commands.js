@@ -100,8 +100,13 @@ class Commands extends AActions
 			{
 				const file_path = `../.${path}/${file}`;
 				const command = require(file_path.slice(0, file_path.length - 3));
-				this.add(command, file_path);
-				this.commands_builder.add(command);
+				if (command.parse)
+				{
+					this.add(command, file_path);
+					this.commands_builder.add(command);
+				}
+				else
+					console.warn(file_path, "method parse is missing")
 			}
 		});
 	}
@@ -148,8 +153,13 @@ class Commands extends AActions
 				{
 					const file_path = `../../add-on/${config.addons}/${module}`;
 					const command = require(file_path.slice(0, file_path.length - 3));
-					this.add(command, file_path);
-					this.commands_builder.add(command);
+					if (command.parse)
+					{
+						this.add(command, file_path);
+						this.commands_builder.add(command);
+					}
+					else
+						console.warn(file_path, "method parse is missing")
 				}
 				else if (statSync(`./add-on/${config.addons}/${module}`).isDirectory())
 				{
@@ -160,8 +170,13 @@ class Commands extends AActions
 						{
 							const file_path = `../../add-on/${config.addons}/${module}/${file}`;
 							const command = require(file_path.slice(0, file_path.length - 3));
-							this.add(command, file_path);
-							this.commands_builder.add(command);
+							if (command.parse)
+							{
+								this.add(command, file_path);
+								this.commands_builder.add(command);
+							}
+							else
+								console.warn(file_path, "method parse is missing")
 						}
 					});
 				}
@@ -188,8 +203,13 @@ class Commands extends AActions
 					{
 						const file_path = `../../sources/modules/${module}/${file}`;
 						const command = require(file_path.slice(0, file_path.length - 3));
-						this.add(command, file_path);
-						this.commands_builder.add(command);
+						if (command.parse)
+						{
+							this.add(command, file_path);
+							this.commands_builder.add(command);
+						}
+						else
+							console.warn(file_path, "method parse is missing")
 					}
 				});
 			}

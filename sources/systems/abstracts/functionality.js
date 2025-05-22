@@ -93,7 +93,10 @@ class AFunctionalities
 			{
 				const file_path = `../../.${path}/${file}`;
 				const handler = require(file_path.slice(0, file_path.length - 3));
-				this.add(handler, file_path);
+				if (handler.parse)
+					this.add(handler, file_path);
+				else
+					console.warn(file_path, "method parse is missing")
 			}
 		});
 	}
@@ -128,7 +131,10 @@ class AFunctionalities
 				{
 					const file_path = `../../../${addons_path}/${this._config.addons}/${module}`;
 					const handler = require(file_path.slice(0, file_path.length - 3));
-					this.add(handler, file_path);
+					if (handler.parse)
+						this.add(handler, file_path);
+					else
+						console.warn(file_path, "method parse is missing")
 				}
 				else if (statSync(`${addons_path}${this._config.addons}/${module}`).isDirectory())
 				{
@@ -139,7 +145,10 @@ class AFunctionalities
 						{
 							const file_path =`../../../${addons_path}/${this._config.addons}/${module}/${file}`;
 							const handler = require(file_path.slice(0, file_path.length - 3));
-							this.add(handler, file_path);
+							if (handler.parse)
+								this.add(handler, file_path);
+							else
+								console.warn(file_path, "method parse is missing")
 						}
 					});
 				}
@@ -166,7 +175,10 @@ class AFunctionalities
 					{
 						const file_path = `../../../sources/modules/${module}/${file}`;
 						const handler  = require(file_path.slice(0, file_path.length - 3));
-						this.add(handler, file_path);
+						if (handler.parse)
+							this.add(handler, file_path);
+						else
+							console.warn(file_path, "method parse is missing")
 					}
 				});
 			}

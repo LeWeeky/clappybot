@@ -106,8 +106,8 @@ class User
     {
         const user = await this.bot.users.fetch(id)
         .catch(err => {
-            console.log(err)
-            return (false)
+            console.error(err)
+            return (null)
         })
 
         if (user)
@@ -139,6 +139,8 @@ class User
 
 		if (!id)
 			return (null);
+		if (typeof id == 'number')
+			id = String(id);
         let len = id.length;
         if (id.startsWith("<@") && id.endsWith(">"))
 

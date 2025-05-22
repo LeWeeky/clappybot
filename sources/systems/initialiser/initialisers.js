@@ -51,7 +51,10 @@ class Initialisers
 					{
 						const file_path = `../../../sources/modules/${module}/${file}`;
 						const initialiser = require(file_path.slice(0, file_path.length - 3));
-						list.push(initialiser.init_module(connection));
+						if (initialiser.init_module)
+							list.push(initialiser.init_module(connection));
+						else
+							console.warn(file_path, "method init_module is missing")
 					}
 				});
 			}
