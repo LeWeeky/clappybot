@@ -18,7 +18,7 @@
 
 const { CONFIG_TABLE } = require('../data');
 const { clappybot } = require('../../main');
-const { Level } = require('../../modules/levels-system/models/Levels');
+// const { Level } = require('../../modules/levels-system/models/Levels');
 
 async function get_guilds_number()
 {
@@ -33,7 +33,7 @@ async function get_guilds_number()
 async function replaceByVariables(member, content, target = false, type = null) 
 
 {
-    const user_level = await Level.firstByOrCreate({discord_id: member.id});
+    // const user_level = await Level.firstByOrCreate({discord_id: member.id});
 
     const guild = member.guild
 
@@ -65,13 +65,13 @@ async function replaceByVariables(member, content, target = false, type = null)
         content = content.replace("{user.join}", member.joinedAt.toLocaleString("fr-FR"))
     }
 
-    while (content.includes("{user.level}")) {
-        content = content.replace("{user.level}", user_level.level)
-    }
+    // while (content.includes("{user.level}")) {
+    //     content = content.replace("{user.level}", user_level.level)
+    // }
 
-    while (content.includes("{user.xp}")) {
-        content = content.replace("{user.xp}", user_level.xp)
-    }
+    // while (content.includes("{user.xp}")) {
+    //     content = content.replace("{user.xp}", user_level.xp)
+    // }
 
     while (["{members}"].some(s => content.includes(s))) {
         content = content.replace("{members}", member.guild.memberCount)
