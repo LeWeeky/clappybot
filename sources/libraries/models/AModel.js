@@ -426,6 +426,39 @@ class AModel {
 	}
 
 	/**
+	 * Returns true if an element 
+	 * corresponds to this fields
+	 * @param {{}} fields
+	 * @returns {Promise<boolean>}
+	 */
+	static async exists(fields)
+	{
+		if (!this.db)
+		{
+			console.error("db is not set for:", this.table);
+			return ([]);
+		}
+		let placeholders = null;
+		const values = [];
+		for (let field in fields)
+		{
+			if (!this.fields[field] && field != 'id')
+			{
+				console.warn(`Field '${field}' doesn't exist in the '${this.table}' table`)
+				continue;
+			}
+			if (!placeholders)
+				placeholders = `${field} = ?`;
+			else
+				placeholders = ` ${placeholders} AND ${field} = ?`;
+			values.push(fields[field])
+		}
+		return (await this.db.exists(
+			this.table, placeholders, values
+		));
+	}
+
+	/**
 	 * Returns the model fields and values
 	 * as an object
 	 * @returns 
