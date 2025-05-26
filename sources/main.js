@@ -269,6 +269,12 @@ class ClappyBot
 					this.critical("DB_DRIVER not set!");
 				process.exit(78);
 		}
+		this.databases.add(
+			new SqliteDriver({
+				path: "data/cache.db",
+			}),
+			"cache"
+		);
 		if (process.env.NEW_TOKEN && process.env.NEW_TOKEN.length > 0)
 		{
 			console.log("🔑 Nouveau token");

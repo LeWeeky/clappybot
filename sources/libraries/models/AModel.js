@@ -238,43 +238,6 @@ class AModel {
 	}
 
 	/**
-	 * Replaces the "friendly type" with
-	 * the type in the SQL server
-	 * @param {string} field 
-	 * @returns 
-	 */
-	static toQueryType(field)
-	{
-		let type;
-
-		switch (this.fields[field])
-		{
-			case "integer":
-				type = "INT DEFAULT 0"
-				break;
-			case "size": // [ ! ] Not supported by PostgreSQL / SQLite
-				type = "UNSIGNED INT"
-				break;
-			case "bigint": // [ ! ] Not supported by PostgreSQL / SQLite
-				type = "UNSIGNED BIGINT"
-				break;
-			case "datetime":
-				type = "DATETIME DEFAULT CURRENT_TIMESTAMP"
-				break;
-			case "string":
-				type = "VARCHAR(255)"
-				break;
-			case "text":
-				type = "TEXT"
-				break;
-			default:
-				type = this.fields[field];
-				break;
-		}
-		return (`${field} ${type}`)
-	}
-
-	/**
 	 * Initialise the model's table,
 	 * you should
 	*/
@@ -302,7 +265,7 @@ class AModel {
 		{
 			if (count != 0)
 				query = query+", \n";
-			query = query + "  " + this.toQueryType(field);
+			query = query + "  " + this.db.constructor.toQueryType(field, this.fields);
 			count++;
 		}
 		await this.db.create(

@@ -71,9 +71,55 @@ class MySQLDriver extends ADriver
 			this._connection.end();
 	}
 
+	/**
+	 * Returns query for auto increment
+	 * premary key 
+	 * @returns {string}
+	 */
 	getAutoIncrementQuery()
 	{
 		return ("id INT AUTO_INCREMENT PRIMARY KEY");
+	}
+
+	/**
+	 * Replaces the "friendly type" with
+	 * the type in the SQL server
+	 * @param {string} field 
+	 * @param {{}} fields
+	 * @returns 
+	 */
+	static toQueryType(field, fields)
+	{
+		let type;
+
+		switch (fields[field])
+		{
+			case "integer":
+				type = "INT DEFAULT 0"
+				break;
+			case "size":
+				type = "UNSIGNED INT"
+				break;
+			case "bigint":
+				type = "UNSIGNED BIGINT"
+				break;
+			case "datetime":
+				type = "DATETIME DEFAULT CURRENT_TIMESTAMP"
+				break;
+			case "string":
+				type = "VARCHAR(255)"
+				break;
+			case "text":
+				type = "TEXT"
+				break;
+			case "boolean":
+				type = "BOOLEAN"
+				break;
+			default:
+				type = fields[field];
+				break;
+		}
+		return (`${field} ${type}`)
 	}
 
 	/**
