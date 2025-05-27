@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags } = require("discord.js");
+const { MessageFlags } = require("discord.js");
 const { isEnable } = require("../../libraries/informations/is_enable");
 const { AActions, AAction } = require("./actions");
 
