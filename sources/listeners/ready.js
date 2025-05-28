@@ -17,7 +17,6 @@
  */
 
 const { clappybot } = require("../main");
-const { init_version } = require("../libraries/init_version");
 const { interactions } = require("../systems/interactions");
 const { build_commands } = require("../systems/interactions/slashBuilder");
 const { get_invites_data } = require("../libraries/fetching/invites");
@@ -55,7 +54,6 @@ async function listen(bot)
 	await build_commands();
 
     const guild = clappybot.getGuild();
-    await init_version(guild)
     if (guild && guild.invites)
     {
         clappybot.swap["invites"] = await get_invites_data(guild)
