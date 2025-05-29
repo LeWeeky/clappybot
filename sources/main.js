@@ -26,7 +26,6 @@ const { ROLES_TABLE, CHANNELS_TABLE, CONFIG_TABLE } = require("./libraries/data"
 const { readdirSync } = require('fs');
 const dotenv = require("dotenv");
 const { exit } = require('process');
-const { save_env } = require('./libraries/save_env');
 const { get_owner_id } = require('./libraries/fetching/owner');
 const { get_host_remaining_days } = require('./libraries/fetching/host');
 const { version } = require("../package.json");
@@ -275,15 +274,6 @@ class ClappyBot
 			}),
 			"cache"
 		);
-		if (process.env.NEW_TOKEN && process.env.NEW_TOKEN.length > 0)
-		{
-			console.log("🔑 Nouveau token");
-			process.env.TOKEN = process.env.NEW_TOKEN;
-			save_env();
-			delete process.env.NEW_TOKEN;
-		}
-		if (!process.env.SERVICE_ID)
-			this.warning("SERVICE_ID not set!");
 		if (!process.env.TOKEN || process.env.TOKEN.length == 0)
         {
 			this.critical("Token not found ...");
