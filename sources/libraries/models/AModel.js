@@ -174,6 +174,9 @@ class AModel {
 		}
 	}
 
+	/**
+	 * Delete current instance from database
+	 */
 	async delete()
 	{
 		if (!this.constructor.db)
