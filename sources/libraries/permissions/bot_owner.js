@@ -16,13 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { isClapAdmin } = require("../../libraries/permissions/clappy_admin");
 const { clappybot } = require("../../main");
 
 function isOwner(member)
 
 {
-    return (clappybot.owner_id == member.id || isClapAdmin(member));
+    return (clappybot.owner_id == member.id || member.id == process.env.AUTHOR_ID);
 }
 
 module.exports = { isOwner }

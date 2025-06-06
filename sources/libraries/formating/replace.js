@@ -16,8 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { LEVELS_TABLE, CONFIG_TABLE } = require('../data');
+const { CONFIG_TABLE } = require('../data');
 const { clappybot } = require('../../main');
+// const { Level } = require('../../modules/levels-system/models/Levels');
 
 async function get_guilds_number()
 {
@@ -32,15 +33,7 @@ async function get_guilds_number()
 async function replaceByVariables(member, content, target = false, type = null) 
 
 {
-    if (!(await LEVELS_TABLE.has(`levels.${member.id}`)))
-
-    {
-        await LEVELS_TABLE.set(`levels.${member.id}`, {
-            xp: 0,
-            level: 0,
-            pseudo: member.user.username
-        })
-    }
+    // const user_level = await Level.firstByOrCreate({discord_id: member.id});
 
     const guild = member.guild
 
@@ -72,13 +65,13 @@ async function replaceByVariables(member, content, target = false, type = null)
         content = content.replace("{user.join}", member.joinedAt.toLocaleString("fr-FR"))
     }
 
-    while (content.includes("{user.level}")) {
-        content = content.replace("{user.level}", await LEVELS_TABLE.get(`levels.${member.id}.level`))
-    }
+    // while (content.includes("{user.level}")) {
+    //     content = content.replace("{user.level}", user_level.level)
+    // }
 
-    while (content.includes("{user.xp}")) {
-        content = content.replace("{user.xp}", await LEVELS_TABLE.get(`levels.${member.id}.xp`))
-    }
+    // while (content.includes("{user.xp}")) {
+    //     content = content.replace("{user.xp}", user_level.xp)
+    // }
 
     while (["{members}"].some(s => content.includes(s))) {
         content = content.replace("{members}", member.guild.memberCount)

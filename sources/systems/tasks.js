@@ -66,6 +66,26 @@ class Tasks extends AFunctionalities
 		this.destroy();
 		await this.load();
 	}
+
+	/**
+	 * 
+	 * @param {*} handler commande à ajouter
+	 * @param {string} file_path
+	 */
+	add(handler, file_path)
+	{
+		if (!handler.start)
+		{
+			console.warn(file_path, "method start is missing")
+			return 
+		}
+		if (!handler.stop)
+		{
+			console.warn(file_path, "method stop is missing")
+			return 
+		}
+		this._list.push(new Task(handler, file_path))
+	}
 }
 
 class Task extends AFunctionality

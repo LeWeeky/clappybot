@@ -241,43 +241,6 @@ class AModel {
 	}
 
 	/**
-	 * Replaces the "friendly type" with
-	 * the type in the SQL server
-	 * @param {string} field 
-	 * @returns 
-	 */
-	static toQueryType(field)
-	{
-		let type;
-
-		switch (this.fields[field])
-		{
-			case "integer":
-				type = "INT DEFAULT 0"
-				break;
-			case "size": // [ ! ] Not supported by PostgreSQL / SQLite
-				type = "UNSIGNED INT"
-				break;
-			case "bigint": // [ ! ] Not supported by PostgreSQL / SQLite
-				type = "UNSIGNED BIGINT"
-				break;
-			case "datetime":
-				type = "DATETIME DEFAULT CURRENT_TIMESTAMP"
-				break;
-			case "string":
-				type = "VARCHAR(255)"
-				break;
-			case "text":
-				type = "TEXT"
-				break;
-			default:
-				type = this.fields[field];
-				break;
-		}
-		return (`${field} ${type}`)
-	}
-
-	/**
 	 * Initialise the model's table,
 	 * you should
 	*/
@@ -305,7 +268,7 @@ class AModel {
 		{
 			if (count != 0)
 				query = query+", \n";
-			query = query + "  " + this.toQueryType(field);
+			query = query + "  " + this.db.constructor.toQueryType(field, this.fields);
 			count++;
 		}
 		await this.db.create(
@@ -426,6 +389,39 @@ class AModel {
 		if (row.length == 0)
 			return (null);
 		return (new this(row[0]))
+	}
+
+	/**
+	 * Returns true if an element 
+	 * corresponds to this fields
+	 * @param {{}} fields
+	 * @returns {Promise<boolean>}
+	 */
+	static async exists(fields)
+	{
+		if (!this.db)
+		{
+			console.error("db is not set for:", this.table);
+			return ([]);
+		}
+		let placeholders = null;
+		const values = [];
+		for (let field in fields)
+		{
+			if (!this.fields[field] && field != 'id')
+			{
+				console.warn(`Field '${field}' doesn't exist in the '${this.table}' table`)
+				continue;
+			}
+			if (!placeholders)
+				placeholders = `${field} = ?`;
+			else
+				placeholders = ` ${placeholders} AND ${field} = ?`;
+			values.push(fields[field])
+		}
+		return (await this.db.exists(
+			this.table, placeholders, values
+		));
 	}
 
 	/**
