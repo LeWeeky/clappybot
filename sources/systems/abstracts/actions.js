@@ -46,10 +46,10 @@ class AActions extends AEvents
 	 */
 	validChannel(interaction, action)
 	{
-		if (this.isDM(interaction.message.channel) && action.dm)
+		if (this.isDM(interaction.channel) && action.dm)
 			return (true);
-		if (interaction.message.guild &&
-			(interaction.message.guild.id == globalThis.guild_id
+		if (interaction.guild &&
+			(interaction.guild.id == globalThis.guild_id
 			|| action.any_guild))
 			return (true);
 		return (false);
