@@ -91,17 +91,17 @@ DEBUG_ERROR=true
 DEBUG_WARING=true
 ```
 
-Now your bot should be online, congratulations 🎉 ! For the time being, you'll need to define a "main guild", which you can do using `/setguild` command, supplied with the module template. Once this is done, you can set up a channel for announcements (updates, changes) with this command `/setsupport`.
+Now your bot should be online, congratulations 🎉 ! For the time being, you'll need to define a "main guild", which you can do using `/setguild` command, supplied with the module settings. Once this is done, you can set up a channel for announcements (updates, changes) with this command `/setsupport`.
 
 ## 💥 Troubleshooting
 
-I'm sorry, the documentation is being processed and has not yet been published ... so if you have any problems or questions, don't hesitate to ask for help on the discord!
+The documentation is available here: https://docs.clappycrew.com/category/clappybot
 
-https://discord.gg/UvQfUbk
+If you have any problems or questions, don't hesitate to ask for help on the discord: https://discord.gg/UvQfUbk
 
 ## 📦 Modules
 
-feel free to create your own modules, a complete documentation on the steps to follow will be published soon, in the meantime you can simply leaf through the template content.
+Feel free to create your own modules, a complete documentation on the steps to follow will be published soon, in the meantime you can simply leaf through the template content.
 
 ## 📜 Licence
 
