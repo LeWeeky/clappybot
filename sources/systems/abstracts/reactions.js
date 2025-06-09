@@ -50,8 +50,24 @@ class AReactions extends AActions
 		return (false);
 	}
 
-	async scan(reaction, user)
+	/**
+	 * 
+	 * @param {*} reaction
+	 * @param {AAction} action 
+	 * @returns {boolean}
+	 */
+	validChannel(reaction, action)
+	{
+		if (this.isDM(reaction.message.channel) && action.dm)
+			return (true);
+		if (reaction.message.guild &&
+			(reaction.message.guild.id == globalThis.guild_id
+			|| action.any_guild))
+			return (true);
+		return (false);
+	}
 
+	async scan(reaction, user)
 	{
 		for (let i in this._list)
 
