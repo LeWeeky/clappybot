@@ -16,21 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { ChannelType } = require("discord.js");
-const { clappybot } = require("../main");
 const { interactions } = require("../systems/interactions");
 
 const name = "messageUpdate";
 async function listen(oldMessage, newMessage)
 
 {
-    if(oldMessage.bot
-		|| oldMessage.partial
-		|| oldMessage.channel.type == ChannelType.DM
-		|| oldMessage.channel.type == ChannelType.GroupDM
-		|| (!oldMessage.guild || oldMessage.guild != globalThis.guild_id)
-		|| newMessage.author.id === clappybot.bot.user.id)
-		return;
 	interactions.messageUpdate.scan(oldMessage, newMessage)
 }
 

@@ -76,8 +76,14 @@ class AMessages extends AActions
 	async scan(message)
 
 	{
+		if (message.author.bot)
+		{
+			console.log(message.author.username)
+		}
+		
 		for (let i in this._list)
 		{
+			console.log(this._list[i])
 			if (this._list[i] && (!message.author.bot || this._list[i].allow_bots) && this.validChannel(message, this._list[i]))
 			{
 				if (await this.has_conditions(message, this._list[i].conditions))
@@ -92,6 +98,11 @@ class AMessages extends AActions
 class AMessage extends AAction
 {
 	/**
+	 * @type boolean
+	 */
+	allow_bots = false;
+
+	/**
 	 * 
 	 * @param {{
 	 * 	conditions: Function[] | undefined, permissions: Function[] | undefined, dm: boolean
@@ -102,6 +113,7 @@ class AMessage extends AAction
 	constructor(interaction, file_path)
 	{
 		super(interaction, file_path)
+		this.allow_bots = interaction.allow_bots
 	}
 }
 

@@ -16,9 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { clappybot } = require('../main');
-
-const { Message, MessageType } = require('discord.js');
+const { Message } = require('discord.js');
 const { interactions } = require('../systems/interactions');
 
 const name = "messageDelete";
@@ -30,15 +28,6 @@ const name = "messageDelete";
 async function listen(message)
 
 {
-	if (!clappybot.bot || !clappybot.bot.user || !message.author) return ;
-
-    if (
-		(message.author.bot
-		&& message.type != MessageType.ChannelPinnedMessage) //TODO ceci bloque la suppression des pins en tickets
-		|| message.type == MessageType.ThreadCreated
-	)
-		return;
-
 	interactions.messageDelete.scan(message);
 }
  

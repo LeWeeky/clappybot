@@ -20,7 +20,7 @@ const { split } = require('../libraries/formating/split');
 const { clappybot } = require('../main');
 
 const { isStaff } = require('../libraries/permissions/guild_staff');
-const { Message, MessageType } = require('discord.js');
+const { Message } = require('discord.js');
 const { interactions } = require('../systems/interactions');
 
 const name = "messageCreate";
@@ -32,15 +32,6 @@ const name = "messageCreate";
 async function listen(message)
 
 {
-	if (!clappybot.bot || !clappybot.bot.user) return ;
-
-    if (
-		(message.author.bot
-		&& message.type != MessageType.ChannelPinnedMessage)
-		|| message.type == MessageType.ThreadCreated
-	)
-		return;
-
     const prefix = clappybot.prefix;
 
     let cmd;
