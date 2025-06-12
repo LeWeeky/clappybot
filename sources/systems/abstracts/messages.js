@@ -76,11 +76,6 @@ class AMessages extends AActions
 	async scan(message)
 
 	{
-		if (message.author.bot)
-		{
-			console.log(message.author.username)
-		}
-		
 		for (let i in this._list)
 		{
 			if (this._list[i] && (!message.author.bot || this._list[i].allow_bots) && this.validChannel(message, this._list[i]))
