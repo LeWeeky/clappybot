@@ -78,7 +78,7 @@ class AMessages extends AActions
 	{
 		for (let i in this._list)
 		{
-			if (this._list[i] && (!message.author.bot || this._list[i].allow_bots) && this.validChannel(message, this._list[i]))
+			if (this._list[i] && (message.author && (!message.author.bot || this._list[i].allow_bots)) && this.validChannel(message, this._list[i]))
 			{
 				if (await this.has_conditions(message, this._list[i].conditions))
 				{
