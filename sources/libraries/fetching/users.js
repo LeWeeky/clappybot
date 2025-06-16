@@ -22,6 +22,10 @@ class User
 
 {
 	/**
+	 * @type {import("discord.js").User}
+	 */
+	instance
+	/**
 	 * @type {string | undefined}
 	 */
 	name;
@@ -51,7 +55,6 @@ class User
      * username?: string, avatarURL?: string, tag?: string, id?: string, avatarSize?: number, displayAvatarURL?: Function}} user 
      */
     constructor(user = {avatarSize: 512})
-
     {
         this.name =  user.username;
         this.username =  user.username;
@@ -61,48 +64,33 @@ class User
 
         this.bot = clappybot.bot;
 
-		this.data = {
-			id : user.id,
-			name : user.username,
-			username: user.username,
-			tag : user.tag,
-			exists: true
-		}
-
         if (user.avatarURL && typeof user.avatarURL == "string")
-        {
 			this.avatarURL = user.avatarURL;
-			this.data.avatarURL = user.avatarURL;
-		}
         else if (typeof user.displayAvatarURL == "function")
-        {
 			this.avatarURL = user.displayAvatarURL({dynamic: true, size: this.avatarSize});
-			this.data.avatarURL = this.avatarURL;
-		}
     }
 
     #set(user)
-
     {
-        this.data = {
-            id : user.id,
-            name : user.username,
-            username: user.username,
-            tag : user.tag,
-            exists: true
-        }
-        this.data.avatarURL = user.displayAvatarURL({dynamic: true, size: 512})
+		this.instance = user;
+        this.avatarURL = user.displayAvatarURL({dynamic: true, size: 512})
 		this.name =  user.username;
         this.username =  user.username;
         this.tag = user.tag;
         this.id = user.id;
         this.avatarSize = user.avatarSize;
 
-        return (this.data);
+		return ({
+            id : user.id,
+            name : user.username,
+            username: user.username,
+            tag : user.tag,
+            exists: true,
+			instance: this.instance
+        });
     }
 
     async #fetch(id)
-
     {
         const user = await this.bot.users.fetch(id)
         .catch(err => {
@@ -112,7 +100,7 @@ class User
 
         if (user)
             return (this.#set(user));
-        return (this.data);
+        return (null);
     }
 
 	/**
@@ -143,17 +131,14 @@ class User
 			id = String(id);
         let len = id.length;
         if (id.startsWith("<@") && id.endsWith(">"))
-
         {
             id = id.slice(2, (id.length - 1));
             len = id.length
         }
 
         if (!isNaN(id))
-
         {
             if (len >= 16 && len <= 20)
-
             {
                 if (this.bot.users.cache.has(id))
                     return (this.#set(this.bot.users.cache.get(id)));
@@ -161,7 +146,7 @@ class User
                     return (await this.#fetch(id));
             }
         }
-        return (false);
+        return (null);
     }
 
 	getData(not_null = false)
@@ -177,26 +162,19 @@ class User
 
 			this.bot = clappybot.bot;
 
-			this.data = {
-				id : user.id,
-				name : user.username,
-				username: user.username,
-				tag : user.tag,
-				exists: true
-			}
-
 			if (user.avatarURL && typeof user.avatarURL == "string")
-			{
 				this.avatarURL = user.avatarURL;
-				this.data.avatarURL = user.avatarURL;
-			}
 			else if (typeof user.displayAvatarURL == "function")
-			{
 				this.avatarURL = user.displayAvatarURL({dynamic: true, size: this.avatarSize});
-				this.data.avatarURL = this.avatarURL;
-			}
 		}
-		return (this.data);
+		return ({
+            id : this.id,
+            name : this.username,
+            username: this.username,
+            tag : this.tag,
+            exists: true,
+			instance: this.instance
+        });
 	}
 }
 
