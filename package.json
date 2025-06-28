@@ -1,7 +1,7 @@
 {
 	"name": "clappybot",
 	"version": "1.1.1",
-	"description": "",
+	"description": "A powerful framework for bot developers",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/LeWeeky/clappybot.git"
