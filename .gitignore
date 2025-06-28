@@ -8,11 +8,14 @@ addon_db.sqlite
 .env
 tests
 sources/modules
+!sources/modules/README.md
 add-on
 add-ons
 addons
 commit.md
 data
+!data/template.mysql.env
+!data/template.sqlite.env
 add_headers.py
 tmp
 
