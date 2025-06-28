@@ -20,10 +20,8 @@
 /////////////////////////////////   The Creation :  /////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-const { ClientUser } = require('./sources/libraries/client');
-const { modules } = require('./sources/systems/modules');
-const { clappybot } = require('./sources/main');
-const bot = new ClientUser();
+const { DiscordClient, clappybot, modules } = require('clappybot');
+const bot = new DiscordClient();
 
 modules.init();
 clappybot.init(bot);
