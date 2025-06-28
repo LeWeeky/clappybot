@@ -16,6 +16,6 @@
 		"update": "git pull && npm i"
 	},
 	"dependencies": {
-		"clappybot": "^0.1.1"
+		"clappybot": "^0.1.2"
 	}
 }
